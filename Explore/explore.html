@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Explore - Upload Study Material</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <!-- libraries to extract text from DOCX and PDF in browser -->
+  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <style>
+    :root {
+      --blue: #1e90ff;
+      --orange: #ff6b00;
+      --white: #ffffff;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: #0b2545;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* === NAVIGATION === */
+    .nav-buttons {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      gap: 10px;
+      z-index: 1000;
+      padding-left: 10px;
+    }
+    .nav-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: var(--white);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .nav-button:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* === MAIN CARD LAYOUT === */
+    .card-wrapper {
+      width: 96vw;
+      max-width: 1400px;
+      min-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch; /* ✅ Makes both divs same height */
+      gap: 0; /* ✅ No gap */
+      margin: 60px auto;
+      box-shadow: 0 6px 24px rgba(20,40,80,0.2);
+      border-radius: 18px;
+      overflow: hidden; /* ✅ Makes borders cleanly merge */
+    }
+
+    .left-panel, .right-panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 32px;
+    }
+
+    .left-panel {
+      flex: 0 0 60%;
+      border-right: none; /* ✅ Removes double border line */
+    }
+
+    .right-panel {
+      flex: 0 0 40%;
+    }
+
+    /* === CONTENT STYLING === */
+    .container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+    }
+    .container h2 {
+      font-size: 26px;
+      margin-bottom: 5px;
+      color: var(--white);
+    }
+    .container p.lead {
+      color: #d0d6df;
+      margin-bottom: 10px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    /* === DROP AREA === */
+    .drop-area {
+      border: 1px dashed rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 30px 12px;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(255,255,255,0.02);
+      width: 90%;
+      max-width: 320px;
+      margin: 10px auto;
+      transition: all 0.2s ease;
+    }
+    .drop-area.dragover {
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.28);
+    }
+    .drop-area i {
+      font-size: 44px;
+      color: var(--blue);
+    }
+    .drop-area h3 {
+      margin: 10px 0 6px;
+      color: var(--white);
+    }
+    .drop-area p {
+      color: #cbd5e1;
+      font-size: 13px;
+      margin: 0;
+    }
+
+    /* === BUTTONS === */
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .btn {
+      background: linear-gradient(90deg, var(--blue) 0%, #0078d7 100%);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .2s;
+      font-size: 15px;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(30,144,255,0.5);
+    }
+    .btn.secondary {
+      background: transparent;
+      color: var(--orange);
+      border: 2px solid var(--orange);
+    }
+    .btn.secondary:hover {
+      background: var(--orange);
+      color: var(--white);
+      box-shadow: 0 4px 14px rgba(255,107,0,0.4);
+    }
+
+    .file-info {
+      margin-top: 10px;
+      display: none;
+      background: rgba(255,255,255,0.08);
+      padding: 8px 10px;
+      border-radius: 8px;
+      border-left: 4px solid var(--blue);
+      font-size: 14px;
+    }
+
+    /* === RIGHT PANEL === */
+    .right-panel img {
+      border-radius: 50%;
+      margin: 0 auto 10px auto;
+      box-shadow: 0 5px 18px #2196f342;
+      border: 3px solid #edf6fb13;
+      width: 75px;
+      height: 75px;
+      object-fit: cover;
+      background: #fff;
+    }
+    .right-panel em {
+      color: #e3ae7b;
+      font-size: 13px;
+      font-style: italic;
+      display: inline-block;
+      margin-top: 6px;
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 900px) {
+      .card-wrapper {
+        flex-direction: column;
+        width: 100%;
+        min-width: 0;
+        margin: 20px;
+        border-radius: 18px;
+      }
+      .left-panel, .right-panel {
+        flex: 1 1 100%;
+        border: none;
+        border-radius: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <div class="nav-buttons">
+    <a href="../LandingPages/index.html" class="nav-button"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="../Progress/progress.html" class="nav-button"><i class="fas fa-tasks"></i><span>Progress</span></a>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="card-wrapper">
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <div class="container">
+        <h2>Upload Your Study File</h2>
+        <p class="lead">
+          Learning just got smarter! Upload your <strong>PDF, Word, or text documents</strong> 
+          and we’ll automatically transform your content into <strong>interactive study tasks</strong>.
+        </p>
+        <div id="dropZone" class="drop-area">
+          <i class="fas fa-folder-open"></i>
+          <h3>Drag & Drop Your File Here</h3>
+          <p>or click to select a file (PDF, TXT, DOC, DOCX)</p>
+          <input id="fileInput" type="file" accept=".pdf,.txt,.doc,.docx" style="display:none">
+        </div>
+        <div class="actions">
+          <button id="chooseBtn" class="btn secondary">Choose File</button>
+          <button id="uploadBtn" class="btn" disabled>Upload & Generate Tasks</button>
+        </div>
+        <div id="fileInfo" class="file-info">
+          <strong>Selected:</strong> <span id="fileName">-</span> &nbsp; • &nbsp; <span id="fileSize">-</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <div class="container">
+        <img src="/Images/Logo.jpg" alt="Logo">
+        <h2>Smart Study Assistant</h2>
+        <p class="lead">
+          Simplify education: upload your materials, and we’ll turn them into easy-to-follow learning tasks.
+          Save time, stay focused, and study smarter — not harder.
+          <br><br>
+          <em>“Upload a file, unlock easy education.”</em>
+        </p>
+        <div class="actions">
+          <button class="btn" onclick="window.location.href='../LandingPages/index.html'">Home</button>
+          <button class="btn secondary" onclick="window.location.href='../Progress/progress.html'">Progress</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const chooseBtn = document.getElementById('chooseBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileNameEl = document.getElementById('fileName');
+    const fileSizeEl = document.getElementById('fileSize');
+    let selectedFile = null;
+
+    chooseBtn.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    ['dragenter','dragover'].forEach(evt => dropZone.addEventListener(evt, e => {
+      e.preventDefault(); dropZone.classList.add('dragover');
+    }));
+    ['dragleave','drop'].forEach(evt => dropZone.addEventListener(evt, e => {
+      e.preventDefault(); dropZone.classList.remove('dragover');
+    }));
+
+    dropZone.addEventListener('drop', e => {
+      const file = e.dataTransfer.files[0];
+      handleFile(file);
+    });
+    fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+    function handleFile(file) {
+      if (!file) return;
+      const allowed = [
+        'application/pdf',
+        'text/plain',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
+      const name = (file.name || '').toLowerCase();
+      const extAllowed = name.endsWith('.pdf') || name.endsWith('.txt') || name.endsWith('.doc') || name.endsWith('.docx');
+      if (!allowed.includes(file.type) && !extAllowed) {
+        alert('Only PDF, TXT, DOC, DOCX allowed');
+        return;
+      }
+      selectedFile = file;
+      fileNameEl.textContent = file.name;
+      fileSizeEl.textContent = formatBytes(file.size);
+      fileInfo.style.display = 'block';
+      uploadBtn.disabled = false;
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B','KB','MB','GB'];
+      const i = Math.floor(Math.log(bytes)/Math.log(k));
+      return parseFloat((bytes/Math.pow(k,i)).toFixed(2))+' '+sizes[i];
+    }
+
+    uploadBtn.addEventListener('click', async () => {
+      if (!selectedFile) return alert('Please select a file first');
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = 'Processing...';
+      try {
+        // Helper: sanitize extracted text
+        const cleanText = (s) => {
+          if (!s) return '';
+          // replace many non-printable chars with space, collapse whitespace
+          return s.replace(/[^\x09\x0A\x0D\x20-\uFFFF]+/g, ' ')
+            .replace(/\s{2,}/g, ' ')
+            .trim();
+        };
+
+        // Extract text from DOCX using mammoth
+        const extractDocx = (file) => new Promise((resolve, reject) => {
+          const fr = new FileReader();
+          fr.onload = async (ev) => {
+            try {
+              const arrayBuffer = ev.target.result;
+              const result = await mammoth.extractRawText({arrayBuffer});
+              resolve(result.value || '');
+            } catch (e) { reject(e); }
+          };
+          fr.onerror = reject;
+          fr.readAsArrayBuffer(file);
+        });
+
+        // Extract text from PDF using pdf.js
+        const extractPdf = (file) => new Promise((resolve, reject) => {
+          const fr = new FileReader();
+          fr.onload = async (ev) => {
+            try {
+              const arrayBuffer = ev.target.result;
+              // set worker
+              if (window.pdfjsLib) {
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+                const loadingTask = window.pdfjsLib.getDocument({data: arrayBuffer});
+                const pdf = await loadingTask.promise;
+                let fullText = '';
+                for (let i = 1; i <= pdf.numPages; i++) {
+                  const page = await pdf.getPage(i);
+                  const content = await page.getTextContent();
+                  const pageText = content.items.map(it => it.str).join(' ');
+                  fullText += '\n\n' + pageText;
+                }
+                resolve(fullText);
+              } else {
+                reject(new Error('pdfjsLib not available'));
+              }
+            } catch (e) { reject(e); }
+          };
+          fr.onerror = reject;
+          fr.readAsArrayBuffer(file);
+        });
+
+        // Decide extraction strategy based on extension
+        const name = selectedFile.name.toLowerCase();
+        let extracted = '';
+        if (name.endsWith('.docx')) {
+          extracted = await extractDocx(selectedFile);
+        } else if (name.endsWith('.pdf')) {
+          extracted = await extractPdf(selectedFile);
+        } else {
+          // default: read as text (txt)
+          const reader = new FileReader();
+          const text = await new Promise((res, rej) => {
+            reader.onload = e => res(e.target.result);
+            reader.onerror = rej;
+            reader.readAsText(selectedFile);
+          });
+          extracted = text;
+        }
+
+        const fileContent = cleanText(extracted || '');
+        if (!fileContent) throw new Error('File appears empty or could not be extracted');
+
+        const uploadData = {
+          fileName: selectedFile.name,
+          content: fileContent,
+          uploadDate: new Date().toISOString()
+        };
+        localStorage.setItem('uploadedFile', JSON.stringify(uploadData));
+        window.location.href = '../Progress/progress.html';
+      } catch (err) {
+        alert('Upload error: ' + err.message);
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = 'Upload & Generate Tasks';
+      }
+    });
+  </script>
+
+  
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "name": "file2task",
+  "version": "1.0.0",
+  "description": "create docs into meaningful tasks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "vamshipendam",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "canvas": "^3.2.0",
+    "cors": "^2.8.5",
+    "dommatrix": "^1.0.3",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "gl-matrix": "^3.4.4",
+    "google-auth-library": "^10.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "mammoth": "^1.11.0",
+    "mongoose": "^8.19.2",
+    "multer": "^2.0.2",
+    "nodemon": "^3.1.10",
+    "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^5.4.296",
+    "port": "^0.8.1"
+  },
+  "keywords": []
+}

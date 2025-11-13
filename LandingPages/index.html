@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>File2Task - Welcome</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <!-- File upload dependencies -->
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+      /* File Upload Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+      }
+
+      .modal-content {
+        background: white;
+        margin: 10% auto;
+        padding: 25px;
+        width: 50%;
+        max-width: 500px;
+        border-radius: 15px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+        position: relative;
+      }
+
+      .close-modal {
+        position: absolute;
+        right: 20px;
+        top: 15px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+      }
+
+      .file-upload-container {
+        text-align: center;
+        padding: 30px 20px;
+        border: 2px dashed #43b6ea;
+        border-radius: 10px;
+        margin: 20px 0;
+        transition: all 0.3s ease;
+      }
+
+      .file-upload-container.dragover {
+        background: #f0f9ff;
+        border-color: #18e5df;
+      }
+
+      .file-upload-container i {
+        font-size: 48px;
+        color: #43b6ea;
+        margin-bottom: 15px;
+      }
+
+      .file-upload-container h3 {
+        margin: 0 0 10px;
+        color: #333;
+      }
+
+      .file-upload-container p {
+        color: #666;
+        margin: 0 0 15px;
+      }
+
+      .file-input {
+        display: none;
+      }
+
+      .select-file-btn {
+        background: linear-gradient(90deg, #43b6ea 0%, #18e5df 100%);
+        color: white;
+        padding: 10px 25px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: transform 0.2s ease;
+      }
+
+      .select-file-btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .file-info {
+        margin-top: 15px;
+        padding: 10px;
+        background: #f5f5f5;
+        border-radius: 5px;
+        display: none;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 10px;
+        background: #f0f0f0;
+        border-radius: 5px;
+        margin-top: 15px;
+        display: none;
+      }
+
+      .progress {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, #43b6ea 0%, #18e5df 100%);
+        border-radius: 5px;
+        transition: width 0.3s ease;
+      }
+
+      /* Text animation classes */
+      .text-focus-in {
+        animation: text-focus-in 1s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+      }
+      .tracking-in-expand {
+        animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+      }
+      .slide-in-left {
+        animation: slide-in-left 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+      }
+      
+      @keyframes text-focus-in {
+        0% {
+          filter: blur(12px);
+          opacity: 0;
+        }
+        100% {
+          filter: blur(0px);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes tracking-in-expand {
+        0% {
+          letter-spacing: -0.5em;
+          opacity: 0;
+        }
+        40% {
+          opacity: 0.6;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+      
+      @keyframes slide-in-left {
+        0% {
+          transform: translateX(-100px);
+          opacity: 0;
+        }
+        100% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* Hover animations */
+      .hover-expand {
+        transition: all 0.3s ease;
+      }
+      .hover-expand:hover {
+        transform: scale(1.05);
+      }
+      
+      /* Continuous animations */
+      .pulse {
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!--navbar-->
+    <nav class="navbar">
+      <div class="logo">
+        <img src="/Images/Logo.jpg" alt="File2Task" />
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="#home" class="hover-expand">Home</a></li>
+        <li><a href="#file2task" class="hover-expand">File2Task</a></li>
+        <li><a href="/Progress/progress.html" class="hover-expand">Progress</a></li>
+        <li><a href="/AI/askai.html" class="hover-expand">AskAI</a></li>
+        <li><a href="#content" class="hover-expand">About</a></li>
+        <li><a href="#contactus" class="hover-expand">Contact</a></li>
+      </ul>
+
+      <div class="welcome text-focus-in" id="welcome">
+        <p style="color: aliceblue;" id="welcomeText">Welcome</p>
+      </div>
+
+      <div class="logout-icon hover-expand">
+        <a href="/Authentication/athen.html" onclick="handleLogout()"><img src="/Images/logout.jpg" alt="logout" /></a>
+      </div>
+    </nav>
+    <!--script for nav begin-->
+    <script>
+      const links = document.querySelectorAll(".nav-links a");
+
+      links.forEach((link) => {
+        link.addEventListener("click", () => {
+          links.forEach((l) => l.classList.remove("active"));
+          link.classList.add("active");
+        });
+      });
+    </script>
+    <!--navbar script end-->
+
+    <!--home-->
+    <div class="main-content" id="home">
+      <div class="left-content" data-aos="fade-right" data-aos-duration="1000">
+        <h1><span class="orange tracking-in-expand">Make studying easy</span></h1>
+        <p class="slide-in-left" style="animation-delay: 0.3s;">
+          turn your notes and documents into
+          actionable tasks, and master your subjects faster
+          than ever!...
+        </p>
+        <button id="explore-btn" class="pulse hover-expand" style="animation-delay: 0.6s;"><a href="/Explore/explore.html" style="text-decoration: none;">EXPLORE</a></button>
+      </div>
+
+      <div class="right-content" data-aos="fade-left" data-aos-duration="1000">
+        <!-- Lottie Animation for hardworking student (docs-style) -->
+        <lottie-player
+          src="https://assets4.lottiefiles.com/packages/lf20_w51pcehl.json"
+          background="transparent"
+          speed="1"
+          style="width: 400px; height: 400px"
+          loop
+          autoplay>
+        </lottie-player>
+      </div>
+    </div>
+
+    <!--file2task-->
+    <div class="phase2" id="file2task">
+      <div class="steps" data-aos="fade-up" data-aos-duration="1000">
+        <div class="step hover-expand">
+          <div class="icon"><span>📁</span></div>
+          <p class="text-focus-in">Upload File</p>
+        </div>
+        <div class="arrow pulse">→</div>
+        <div class="step hover-expand">
+          <div class="icon"><span>📝</span></div>
+          <p class="text-focus-in">Task Generated</p>
+        </div>
+        <div class="arrow pulse">→</div>
+        <div class="step hover-expand">
+          <div class="icon"><span>🤖</span></div>
+          <p class="text-focus-in">AskAI</p>
+        </div>
+        <div class="arrow pulse">→</div>
+        <div class="step hover-expand">
+          <div class="icon"><span>✅</span></div>
+          <p class="text-focus-in">Complete Task</p>
+        </div>
+        <div class="arrow pulse">→</div>
+        <div class="step hover-expand">
+          <div class="icon"><span>📊</span></div>
+          <p class="text-focus-in">Progress</p>
+        </div>
+        <div class="arrow pulse">→</div>
+        <div class="step hover-expand">
+          <div class="icon"><span>🏁</span></div>
+          <p class="text-focus-in">Done</p>
+        </div>
+      </div>
+
+      <div class="description" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+        <hr />
+        <p class="slide-in-left" style="animation-delay: 0.1s;">Submit your notes or study material to get started.</p>
+        <p class="slide-in-left" style="animation-delay: 0.2s;">
+          The system automatically breaks down your content into manageable
+          tasks
+        </p>
+        <p class="slide-in-left" style="animation-delay: 0.3s;">Ask questions or clarify doubts using the integrated AI assistant</p>
+        <p class="slide-in-left" style="animation-delay: 0.4s;">Work through each task and mark it as completed.</p>
+        <p class="slide-in-left" style="animation-delay: 0.5s;">Track your overall progress with visual dashboards or summaries.</p>
+        <p class="slide-in-left" style="animation-delay: 0.6s;">Celebrate completed tasks and review your achievements.</p>
+        <hr />
+      </div>
+    </div>
+
+    <!--about-->
+    <div class="content" id="content">
+      <div class="left">
+        <div class="feature hover-expand" data-aos="fade-right" data-aos-duration="800">
+          <h3 class="tracking-in-expand">Breakdown</h3>
+          <p class="text-focus-in">
+            We divide your entire content into bite-sized, manageable tasks.
+            This ensures focused learning without burnout, tailored to your
+            deadlines and goals.
+          </p>
+        </div>
+
+        <div class="feature hover-expand" data-aos="fade-right" data-aos-duration="800" data-aos-delay="200">
+          <h3 class="tracking-in-expand">Personalized Daily Planner</h3>
+          <p class="text-focus-in">
+            Our smart system creates daily schedules that adapt based on your
+            available time and learning speed. No more guessing what to study
+            next.
+          </p>
+        </div>
+
+        <div class="feature hover-expand" data-aos="fade-right" data-aos-duration="800" data-aos-delay="400">
+          <h3 class="tracking-in-expand">Tracking & Reminders</h3>
+          <p class="text-focus-in">
+            Stay on track with progress bars, smart reminders, and motivational
+            nudges. Whether you're ahead or behind, the system adjusts your plan
+            dynamically.
+          </p>
+        </div>
+      </div>
+
+      <div class="right" data-aos="fade-left" data-aos-duration="1000">
+        <h2 class="tracking-in-expand">A Glimpse Into<br />Your Smart<br />Process</h2>
+      </div>
+    </div>
+
+    <!--contact-->
+    <div id="contactus">
+      <section class="hero">
+        <div class="hero-text" data-aos="fade-right" data-aos-duration="1000">
+          <h1 class="tracking-in-expand">Excited to watch your journey unfold!</h1>
+          <p class="text-focus-in">
+            For more information or queries, connect with us at: <br />
+            <a href="mailto:23p61a05i6@vbithyd.ac.in" class="hover-expand"
+              >23p61a05i6@vbithyd.ac.in</a
+            >
+          </p>
+        </div>
+
+        <div class="hero-lottie" data-aos="fade-left" data-aos-duration="1000">
+          <lottie-player
+            src="https://assets6.lottiefiles.com/packages/lf20_jcikwtux.json"
+            background="transparent"
+            speed="1"
+            style="width: 300px; height: 300px"
+            loop
+            autoplay
+          ></lottie-player>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer>
+        <div>
+          <h3>File2Task</h3>
+          <p style="color: aliceblue">
+            Transform your notes into actionable tasks and achieve more every
+            day!
+          </p>
+        </div>
+        <div>
+          <h3>Quick Links</h3>
+          <a href="#home">Home</a>
+          <a href="#file2task">File2Task</a>
+          <a href="/Progress/progress.html">Progress</a>
+          <a href="#">AskAI</a>
+          <a href="#content">About</a>
+        </div>
+        <div>
+          <h3>Contact</h3>
+          <p>
+            <a href="mailto:23p61a05i6@vbithyd.ac.in"
+              >23p61a05i6@vbithyd.ac.in</a>
+          </p>
+          
+          <div class="social">
+            <img src="/Images/linkedin.jpg" alt="LinkedIn"/>
+            <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube"/>
+            <img src="/Images/github.jpg" alt="GitHub"/>
+          </div>
+
+        </div>
+      </footer>
+    </div>
+
+    <!-- File Upload Modal -->
+    <div id="fileUploadModal" class="modal">
+      <div class="modal-content" data-aos="zoom-in" data-aos-duration="500">
+        <span class="close-modal">&times;</span>
+        <h2 class="tracking-in-expand">Upload Your Study Material</h2>
+        <div class="file-upload-container" id="dropZone">
+          <i class="fas fa-cloud-upload-alt pulse"></i>
+          <h3>Drag & Drop your file here</h3>
+          <p>or</p>
+          <input type="file" id="fileInput" class="file-input" accept=".pdf,.txt,.doc,.docx">
+          <button class="select-file-btn hover-expand">Select File</button>
+          <div class="file-info">
+            <p><strong>Selected file:</strong> <span id="fileName">No file selected</span></p>
+            <p><strong>Size:</strong> <span id="fileSize">-</span></p>
+            <p><strong>Type:</strong> <span id="fileType">-</span></p>
+          </div>
+          <div class="progress-bar">
+            <div class="progress"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize AOS (Animate On Scroll)
+      AOS.init({
+        duration: 1000,
+        once: false,
+        mirror: true
+      });
+
+      // Display logged-in user's name from localStorage
+      function displayLoggedInUser() {
+        const welcomeEl = document.getElementById('welcomeText');
+        if (!welcomeEl) return;
+
+        // Try to get user info from localStorage (set during login/sign-up)
+        const userName = localStorage.getItem('userName');
+        const userEmail = localStorage.getItem('userEmail');
+        const token = localStorage.getItem('token');
+
+        if (token && userName) {
+          welcomeEl.textContent = `Welcome, ${userName}!`;
+        } else if (token && userEmail) {
+          welcomeEl.textContent = `Welcome, ${userEmail}!`;
+        } else {
+          welcomeEl.textContent = 'Welcome';
+        }
+      }
+
+      // Handle logout: clear localStorage
+      function handleLogout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('uploadedFile');
+        localStorage.removeItem('tasks');
+        // Redirect to auth page will happen via the link
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        displayLoggedInUser();
+      });
+    </script>
+  </body>
+</html>

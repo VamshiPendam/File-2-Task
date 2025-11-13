@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Generated Tasks - Study Material</title>
+    <style>
+      :root {
+        --blue: #1e90ff;
+        --orange: #ff6b00;
+        --bg: #0b2545;
+        --card-bg: rgba(255,255,255,0.03);
+        --muted: #cbd5e1;
+        --white: #ffffff;
+      }
+
+      body {
+        margin: 0;
+        padding: 0 32px;
+        min-height: 100vh;
+        background: var(--bg);
+        font-family: 'Segoe UI', Arial, sans-serif;
+        color: var(--white);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+      }
+
+      .page {
+        width: 100%;
+        max-width: 1200px;
+        margin: 28px auto;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .header-meta {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .nav-buttons {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .nav-buttons .btn {
+        padding: 8px 16px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .nav-buttons .btn i {
+        font-size: 18px;
+      }
+
+      /* Filters */
+      .filters {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .filter-btn {
+        background: transparent;
+        color: var(--white);
+        border: 1px solid rgba(255,255,255,0.06);
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .filter-btn.active {
+        background: linear-gradient(90deg, var(--blue), #0078d7);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 6px 18px rgba(30,144,255,0.18);
+      }
+
+      .task-checkbox {
+        appearance: none;
+        background: rgba(255,255,255,0.05);
+        border: 2px solid rgba(255,255,255,0.1);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .task-checkbox:checked {
+        background: var(--blue);
+        border-color: var(--blue);
+        position: relative;
+      }
+
+      .task-checkbox:checked::after {
+        content: '✓';
+        position: absolute;
+        color: white;
+        font-size: 12px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .selection-controls {
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        margin-bottom: 10px;
+      }
+
+      .panel {
+        background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+
+      .task-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .task-card {
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 8px 24px rgba(2,8,23,0.6);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .task-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--white);
+        margin: 0;
+      }
+
+      .task-number {
+        display: inline-block;
+        background: rgba(255,255,255,0.06);
+        color: var(--white);
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 700;
+        margin-right: 8px;
+        font-size: 13px;
+      }
+
+      .task-badge {
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .task-badge.done {
+        background: linear-gradient(90deg, var(--blue), #0078d7);
+        color: var(--white);
+      }
+
+      .task-badge.incomplete {
+        background: linear-gradient(90deg, var(--orange), #ff8a33);
+        color: var(--white);
+      }
+
+      .task-body {
+        color: #d7e0ee;
+        font-size: 14px;
+        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .question-text {
+        font-size: 15px;
+        color: var(--white);
+        font-weight: 500;
+        line-height: 1.5;
+      }
+
+      .question-detail {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .choices {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .choice {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 8px;
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 14px;
+        color: #d7e0ee;
+      }
+
+      .choice:hover {
+        background: rgba(255,255,255,0.05);
+        transform: translateY(-1px);
+      }
+
+      .choice.selected {
+        border-color: var(--blue);
+        background: rgba(30,144,255,0.1);
+      }
+
+      .subtasks {
+        margin-top: 16px;
+        background: rgba(255,255,255,0.03);
+        border-radius: 8px;
+        padding: 12px;
+      }
+
+      .subtasks-title {
+        font-size: 14px;
+        color: var(--white);
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+
+      .subtask-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .subtask-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .subtask-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--blue);
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .subtask-item label {
+        cursor: pointer;
+        flex: 1;
+      }
+
+      .task-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+      }
+
+      .btn {
+        background: linear-gradient(90deg, var(--blue) 0%, #0078d7 100%);
+        color: #fff;
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 14px rgba(30,144,255,0.5);
+      }
+
+      .btn.ghost {
+        background: transparent;
+        border: 2px solid rgba(255,255,255,0.06);
+        color: var(--white);
+      }
+
+      .btn.ghost:hover {
+        border-color: var(--blue);
+        box-shadow: none;
+      }
+
+      .nav-buttons {
+        display: flex;
+        gap: 12px;
+      }
+
+      .nav-buttons .btn {
+        padding: 8px 16px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .nav-buttons .btn i {
+        font-size: 18px;
+      }
+
+      .stats {
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+      }
+
+      .stat-card {
+        background: rgba(255,255,255,0.02);
+        border-radius: 12px;
+        padding: 16px;
+        min-width: 160px;
+        flex: 1;
+      }
+
+      .stat-title {
+        color: var(--muted);
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--white);
+      }
+
+      .progress-container {
+        padding: 20px;
+        text-align: center;
+      }
+
+      @media (max-width: 768px) {
+        body { padding: 16px; }
+        .header { flex-direction: column; align-items: flex-start; }
+        .stats { flex-direction: column; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="header">
+        <div>
+          <h1>Generated Study Tasks</h1>
+          <div class="header-meta">
+            File: <span id="fileName">-</span> • Generated on <span id="genDate">-</span>
+          </div>
+        </div>
+        <div class="nav-buttons">
+          <a href="/AI/askai.html" class="btn ghost">
+            <i></i>Ask AI
+          </a>
+          <a href="/LandingPages/index.html" class="btn ghost">
+            <i></i> Home
+          </a>
+          <a href="/Explore/explore.html" class="btn">
+            <i></i> Upload New
+          </a>
+          <button id="selectAllBtn" class="btn ghost">
+            <i>✓</i> Select All
+          </button>
+          <button id="deleteSelectedBtn" class="btn ghost" style="color: #ff4444;">
+            <i></i> Delete Selected
+          </button>
+        </div>
+      </div>
+
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="key_concepts">Key Concepts</button>
+        <button class="filter-btn" data-filter="question">Questions</button>
+      </div>
+
+      <!-- Progress Overview -->
+      <div class="panel">
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-title">Total Tasks</div>
+            <div class="stat-value" id="totalTasks">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Tasks Completed</div>
+            <div class="stat-value" id="completedTasks">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Completion Rate</div>
+            <div class="stat-value" id="completionRate">0%</div>
+          </div>
+        </div>
+        <div class="progress-container">
+          <div id="progressChart">
+            <!-- SVG progress ring inserted by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Task List -->
+      <div class="panel">
+        <div id="tasksGrid" class="task-grid">
+          <!-- Task cards injected here -->
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Initialize application state
+      const state = {
+        tasks: [],
+        currentFilter: 'all'
+      };
+
+      // Initialize DOM elements
+      const elements = {
+        tasksGrid: document.getElementById('tasksGrid'),
+        fileName: document.getElementById('fileName'),
+          genDate: document.getElementById('genDate'),
+          totalTasksEl: document.getElementById('totalTasks'),
+          completedTasksEl: document.getElementById('completedTasks'),
+          completionRateEl: document.getElementById('completionRate'),
+          progressChart: document.getElementById('progressChart')
+        };
+
+      // Function to break down content into sections
+      function breakIntoSections(content) {
+        // Split by headers or double line breaks
+        const sections = content.split(/(?:\r?\n){2,}/).filter(s => s.trim());
+        
+        let currentTopic = '';
+        const structuredSections = [];
+        
+        sections.forEach(section => {
+          const lines = section.split('\n');
+          // Check if this section starts with what looks like a header
+          if (lines[0] && lines[0].length < 100 && /^[A-Z]/.test(lines[0])) {
+            currentTopic = lines[0].trim();
+            structuredSections.push({
+              topic: currentTopic,
+              content: lines.slice(1).join('\n').trim()
+            });
+          } else {
+            structuredSections.push({
+              topic: currentTopic,
+              content: section.trim()
+            });
+          }
+        });
+        
+        return structuredSections;
+      }
+
+      // Simple keyword extractor (returns top 3 candidate terms)
+      function extractKeyTerms(text) {
+        const stopwords = new Set([
+          'the','and','for','with','that','from','this','these','those','are','was','were','been',
+          'which','what','when','where','how','why','can','will','would','should','could','also',
+          'such','into','using','use','used','using','about','between','among','other','some','many'
+        ]);
+        const words = text
+          .toLowerCase()
+          .replace(/[^a-z\s]/g, ' ')
+          .split(/\s+/)
+          .filter(w => w.length > 3 && !stopwords.has(w));
+
+        const freq = {};
+        words.forEach(w => freq[w] = (freq[w] || 0) + 1);
+        const candidates = Object.keys(freq).sort((a,b) => freq[b] - freq[a]);
+        return candidates.slice(0,3);
+      }
+
+      // Get and update persistent task counter stored in localStorage
+      function getNextCounter() {
+        const cur = parseInt(localStorage.getItem('taskCounter') || '0', 10) || 0;
+        const next = cur + 1;
+        localStorage.setItem('taskCounter', next.toString());
+        return next;
+      }
+
+      // Reset task counter
+      function resetTaskCounter() {
+        localStorage.setItem('taskCounter', '0');
+      }
+
+      // Function to process uploaded content and generate tasks
+      function generateTasks(content) {
+        if (!content || typeof content !== 'string') {
+          console.error('Invalid content provided');
+          return [];
+        }
+
+        // helpers
+        function cleanText(s) {
+          if (!s) return '';
+          return s.replace(/[^\x09\x0A\x0D\x20-\uFFFF]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+        }
+
+        function isMostlyBinary(s) {
+          if (!s) return true;
+          const len = s.length;
+          if (len === 0) return true;
+          const printable = s.replace(/[^\x20-\x7E\x09\x0A\x0D]/g, '');
+          const ratio = printable.length / len;
+          return ratio < 0.6;
+        }
+
+        function splitSentences(text) {
+          // naive sentence splitter, keeps punctuation
+          return text
+            .replace(/\r/g, ' ')
+            .split(/(?<=[.?!])\s+(?=[A-Z0-9])/)
+            .map(s => s.trim())
+            .filter(s => s.length > 0);
+        }
+
+        const STOPWORDS = new Set(['the','and','for','with','that','from','this','these','those','are','was','were','been','which','what','when','where','how','why','can','will','would','should','could','also','such','into','using','use','used','about','between','among','other','some','many','a','an','in','on','of','to','is','as','by','be','it']);
+
+        function pickBlankWord(sentence) {
+          const words = sentence.split(/[^a-zA-Z0-9]+/).filter(w => w.length>3);
+          // prefer longer, non-stopwords
+          const candidates = words.filter(w => !STOPWORDS.has(w.toLowerCase()));
+          if (candidates.length === 0) return null;
+          candidates.sort((a,b) => b.length - a.length);
+          return candidates[0];
+        }
+
+        // split into sections (existing helper)
+        const sections = breakIntoSections(content).map(s => ({topic: s.topic || '', content: cleanText(s.content || '')})).filter(s => s.content && !isMostlyBinary(s.content));
+
+        const tasks = [];
+        let taskCounter = 1;
+
+        // Per-section generation
+        sections.forEach((sec) => {
+          const secText = sec.content;
+          const sentences = splitSentences(secText);
+
+          // Section-level: key points
+          const keyTerms = extractKeyTerms(secText);
+          if (keyTerms.length) {
+            tasks.push({
+              id: `task_${Date.now()}_${taskCounter}`,
+              taskNumber: taskCounter++,
+              type: 'key_concepts',
+              title: `Key Concepts: ${sec.topic || 'This Section'}`,
+              question: `Based on this section, identify and briefly explain the top key concepts covered. The main topics are: ${keyTerms.join(', ')}. For each concept, write 1-2 sentences explaining what it is and why it matters.`,
+              status: 'incomplete',
+              createdAt: new Date().toISOString()
+            });
+          }
+
+          // Sentence-level tasks (limit per section to avoid explosion)
+          const perSectionLimit = Math.max(3, Math.min(6, Math.floor(sentences.length/2)));
+          let produced = 0;
+          for (let i=0;i<sentences.length && produced<perSectionLimit;i++) {
+            const s = sentences[i];
+            if (!s || s.length < 20) continue;
+
+            // 1) Summary task
+            tasks.push({
+              id: `task_${Date.now()}_${taskCounter}`,
+              taskNumber: taskCounter++,
+              type: 'summary',
+              title: `Summarize This Idea`,
+              question: `Read the following sentence carefully and write a 1-2 sentence summary in your own words: "${s}". Focus on the main idea and why it is important.`,
+              status: 'incomplete',
+              createdAt: new Date().toISOString()
+            });
+
+            // 2) Explain / short-answer question
+            tasks.push({
+              id: `task_${Date.now()}_${taskCounter}`,
+              taskNumber: taskCounter++,
+              type: 'question',
+              title: `Explain This Concept`,
+              question: `Please explain the meaning and significance of the following statement. Provide a detailed explanation (2-3 sentences) that shows you understand the concept: "${s}". Give real-world examples if possible.`,
+              status: 'incomplete',
+              createdAt: new Date().toISOString()
+            });
+
+            // 3) Fill-in-the-blank if possible
+            const blankWord = pickBlankWord(s);
+            if (blankWord) {
+              const blanked = s.replace(new RegExp(`\\b${blankWord}\\b`,'i'), '_____');
+              tasks.push({
+                id: `task_${Date.now()}_${taskCounter}`,
+                taskNumber: taskCounter++,
+                type: 'fill_blank',
+                title: `Complete the Sentence`,
+                question: `Complete the following sentence by filling in the missing word (represented by _____). Think carefully about what word best completes the meaning of the sentence: "${blanked}". What is the missing word?`,
+                status: 'incomplete',
+                meta: {answer: blankWord},
+                createdAt: new Date().toISOString()
+              });
+            }
+
+            // 4) Flashcard - naive definition extraction (X is Y)
+            const defMatch = s.match(/^\s*([A-Z][^,\-:\n]{1,60}?)\s+is\s+(?:an?|the)\s+(.{10,200})/i);
+            if (defMatch) {
+              const term = defMatch[1].trim();
+              const def = defMatch[2].replace(/[.?!]$/, '').trim();
+              tasks.push({
+                id: `task_${Date.now()}_${taskCounter}`,
+                taskNumber: taskCounter++,
+                type: 'flashcard',
+                title: `Define: ${term}`,
+                question: `Define the term "${term}" based on the document. The provided definition is: "${def}". Now, write your own explanation (1-3 sentences) that demonstrates your understanding of this term, including why it is important in this context.`,
+                status: 'incomplete',
+                meta: {term, definition: def},
+                createdAt: new Date().toISOString()
+              });
+            }
+
+            produced += 1;
+          }
+        });
+
+        // Global-level tasks: overall summary and quiz prompt
+        const globalKeyTerms = extractKeyTerms(content);
+        if (globalKeyTerms.length) {
+          tasks.push({
+            id: `task_${Date.now()}_${taskCounter}`,
+            taskNumber: taskCounter++,
+            type: 'summary',
+            title: 'Overall Document Summary',
+            question: `Write a comprehensive summary of the entire document (3-5 sentences). In your summary, make sure to cover the following key topics and explain how they connect: ${globalKeyTerms.join(', ')}. Your summary should capture the main ideas and the overall message of the document.`,
+            status: 'incomplete',
+            createdAt: new Date().toISOString()
+          });
+
+          tasks.push({
+            id: `task_${Date.now()}_${taskCounter}`,
+            taskNumber: taskCounter++,
+            type: 'quiz',
+            title: 'Create Review Questions',
+            question: `Based on your understanding of the document, create 3-5 short quiz questions (with answers) that would help someone learn the key concepts. Make sure your questions cover: ${globalKeyTerms.join(', ')}. Format: Write each question, then provide the correct answer below it. Questions should test both understanding and recall.`,
+            status: 'incomplete',
+            createdAt: new Date().toISOString()
+          });
+        }
+
+        // Deduplicate tasks by normalized question/title, and cap total
+        const seen = new Set();
+        const unique = [];
+        for (const t of tasks) {
+          const norm = ((t.question||'') + ' ' + (t.title||'')).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+          if (seen.has(norm)) continue;
+          seen.add(norm);
+          unique.push(t);
+          if (unique.length >= 120) break; // safety cap
+        }
+
+        // Assign final sequential task numbers
+        unique.forEach((t, idx) => t.taskNumber = idx+1);
+
+        return unique;
+      }
+
+      function loadTasks() {
+        console.log('Loading tasks...');
+        
+        // Try to load from localStorage
+        const fileData = localStorage.getItem('uploadedFile');
+        
+        if (fileData) {
+          try {
+            // Parse the uploaded file data
+            const data = JSON.parse(fileData);
+            console.log('Found uploaded file:', data.fileName);
+            
+            // Generate new tasks from the content
+            const newTasks = generateTasks(data.content);
+            if (newTasks && newTasks.length > 0) {
+              console.log(`Generated ${newTasks.length} tasks`);
+
+              // Update the application state
+              state.tasks = newTasks;
+
+              // Update the UI
+              elements.fileName.textContent = data.fileName || 'Uploaded Document';
+              elements.genDate.textContent = new Date().toLocaleDateString();
+
+              // Clear the uploaded file data
+              localStorage.removeItem('uploadedFile');
+
+              // Save tasks to localStorage
+              localStorage.setItem('tasks', JSON.stringify(state.tasks));
+
+              // Render the tasks
+              renderTasks();
+              return;
+            }
+
+            // nothing generated -> continue and load existing tasks
+            localStorage.removeItem('uploadedFile');
+            renderTasks();
+            return;
+          } catch (error) {
+            console.error('Error processing uploaded file:', error);
+            return;
+          }
+        }
+
+        // If no new file, load existing tasks
+        const stored = localStorage.getItem('tasks');
+        if (stored) {
+          state.tasks = JSON.parse(stored);
+        }
+        renderTasks();
+      }
+
+      function updateProgress() {
+  const total = state.tasks.length;
+  const completed = state.tasks.filter(t => t.status === 'done').length;
+  const rate = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+        // Update stats
+        elements.totalTasksEl.textContent = total;
+        elements.completedTasksEl.textContent = completed;
+        elements.completionRateEl.textContent = rate + '%';
+
+        // Create SVG progress ring
+        const size = 120;
+        const stroke = 10;
+        const radius = (size - stroke) / 2;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (circumference * rate / 100);
+
+        const svg = `
+          <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+            <defs>
+              <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="var(--orange)" />
+                <stop offset="100%" stop-color="var(--blue)" />
+              </linearGradient>
+            </defs>
+            <circle cx="${size/2}" cy="${size/2}" r="${radius}"
+              stroke="rgba(255,255,255,0.06)" stroke-width="${stroke}" fill="none"/>
+            <circle cx="${size/2}" cy="${size/2}" r="${radius}"
+              stroke="url(#g1)" stroke-width="${stroke}" stroke-linecap="round"
+              stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
+              transform="rotate(-90 ${size/2} ${size/2})" fill="none"/>
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+              font-size="24" fill="var(--white)" font-weight="700">
+              ${rate}%
+            </text>
+          </svg>`;
+
+        elements.progressChart.innerHTML = svg;
+      }
+
+      let currentFilter = 'all';
+
+      function renderTasks() {
+        // Clear the task grid
+        elements.tasksGrid.innerHTML = '';
+        
+        // Get tasks to display
+        const tasksToDisplay = state.tasks.filter(task => 
+          state.currentFilter === 'all' || task.type === state.currentFilter
+        );
+        
+        // Create task cards
+        tasksToDisplay.forEach(task => {
+          const taskCard = document.createElement('div');
+          taskCard.className = 'task-card';
+          taskCard.style.display = 'flex';
+          taskCard.style.flexDirection = 'column';
+          taskCard.style.gap = '16px';
+          
+          // Header with checkbox and task number
+          const header = document.createElement('div');
+          header.className = 'task-header';
+          header.style.display = 'flex';
+          header.style.gap = '12px';
+          header.style.alignItems = 'center';
+          
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.className = 'task-checkbox';
+          checkbox.setAttribute('data-task-id', task.id);
+          // reflect status
+          checkbox.checked = task.status === 'done';
+          checkbox.addEventListener('change', () => toggleStatus(task.id));
+          
+          const number = document.createElement('span');
+          number.className = 'task-number';
+          number.textContent = `Task ${task.taskNumber}`;
+          
+          header.appendChild(checkbox);
+          header.appendChild(number);
+          taskCard.appendChild(header);
+          
+          // Task content
+          const content = document.createElement('div');
+          content.className = 'task-content';
+          content.style.flex = '1';
+          
+          const questionText = document.createElement('p');
+          questionText.className = 'question-text';
+          questionText.textContent = task.question;
+          content.appendChild(questionText);
+          taskCard.appendChild(content);
+          
+          // Toggle button
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = `btn`;
+          toggleBtn.textContent = task.status === 'done' ? 'Mark Incomplete' : 'Mark Complete';
+          toggleBtn.onclick = () => toggleStatus(task.id);
+          taskCard.appendChild(toggleBtn);
+
+          // small type badge
+          const badge = document.createElement('span');
+          badge.className = 'task-badge ' + (task.status === 'done' ? 'done' : 'incomplete');
+          badge.style.alignSelf = 'flex-end';
+          badge.textContent = task.type === 'question' ? 'Question' : (task.type === 'key_concepts' ? 'Key Concept' : task.type);
+          taskCard.appendChild(badge);
+          
+          elements.tasksGrid.appendChild(taskCard);
+        });
+        
+        updateProgress();
+      }
+
+      async function toggleStatus(id) {
+        const taskIndex = state.tasks.findIndex(t => t.id === id);
+        if (taskIndex === -1) return;
+
+        const newStatus = state.tasks[taskIndex].status === 'done' ? 'incomplete' : 'done';
+        state.tasks[taskIndex].status = newStatus;
+
+        // Optimistic update
+        renderTasks();
+
+        // Try to update server (optional)
+        const token = localStorage.getItem('token');
+        if (token && !state.tasks[taskIndex].id.toString().startsWith('t_')) {
+          try {
+            await fetch('/tasks/' + id, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+              },
+              body: JSON.stringify({ status: newStatus })
+            });
+          } catch(e) {
+            console.warn('Could not update task status on server', e);
+          }
+        }
+
+        // Update localStorage
+        try {
+          const stored = JSON.parse(localStorage.getItem('tasks') || '[]');
+          const idx = stored.findIndex(t => t.id === id);
+          if (idx !== -1) {
+            stored[idx].status = newStatus;
+            localStorage.setItem('tasks', JSON.stringify(stored));
+          }
+        } catch(e) {
+          console.warn('Could not update localStorage', e);
+        }
+      }
+
+      // Function to delete selected tasks
+      function deleteSelectedTasks() {
+        const selectedCheckboxes = document.querySelectorAll('.task-checkbox:checked');
+        if (selectedCheckboxes.length === 0) {
+          alert('Please select tasks to delete!');
+          return;
+        }
+
+        const confirmed = confirm(`Are you sure you want to delete ${selectedCheckboxes.length} selected tasks?`);
+        if (!confirmed) return;
+
+        // Get the IDs of selected tasks
+        const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.getAttribute('data-task-id'));
+        
+        // Remove selected tasks from the array
+        state.tasks = state.tasks.filter(t => !selectedIds.includes(t.id));
+        
+        // Update localStorage
+        localStorage.setItem('tasks', JSON.stringify(state.tasks));
+        
+        // Refresh the display
+        renderTasks();
+      }
+
+      // Function to select/deselect all tasks
+      function selectAllTasks() {
+        const checkboxes = document.querySelectorAll('.task-checkbox');
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        checkboxes.forEach(cb => {
+          cb.checked = !allChecked;
+        });
+      }
+
+      // Function to initialize the application
+      function initializeApp() {
+        // Set up filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => 
+              b.classList.remove('active')
+            );
+            btn.classList.add('active');
+            state.currentFilter = btn.getAttribute('data-filter');
+            renderTasks();
+          });
+        });
+        
+        // Set up select all button
+        document.getElementById('selectAllBtn')?.addEventListener('click', selectAllTasks);
+        
+        // Set up delete selected button
+        document.getElementById('deleteSelectedBtn')?.addEventListener('click', deleteSelectedTasks);
+
+        // Load initial tasks
+        loadTasks();
+      }
+
+      // Initialize when DOM is ready
+      document.addEventListener('DOMContentLoaded', () => {
+        initializeApp();
+      });
+    </script>
+
+  </body>
+
+</html>

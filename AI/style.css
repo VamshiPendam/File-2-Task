@@ -1,0 +1,432 @@
+/* Reset and box-sizing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body fills full viewport */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* prevent body scroll */
+}
+
+/* Container fills entire viewport */
+.container {
+    width: 100vw;
+    height: 100vh;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Header styling */
+.header {
+    padding: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    gap: 20px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.header-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 20px;
+    flex: 1;
+    width: 100%;
+}
+
+.tagline {
+    font-size: 20px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.header-left img {
+    flex-shrink: 0;
+}
+
+.header-left p {
+    font-size: 14px;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.header-right {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.header-right a {
+    text-decoration: none;
+}
+
+.header-right button {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.3s;
+}
+
+.header-right button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Chat container occupies all remaining space */
+.chat-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Layout for main area with sidebar */
+.main-area {
+    flex: 1;
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    overflow: hidden;
+}
+
+.chat-column {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.history-column {
+    width: 300px;
+    background: #ffffff;
+    border-left: 1px solid #e6e6e6;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: auto;
+}
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.history-header h3 {
+    font-size: 16px;
+    margin: 0;
+}
+
+#clearHistoryBtn {
+    background: transparent;
+    border: 1px solid #ddd;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.history-item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px;
+    border-radius: 8px;
+    background: #fafafa;
+    border: 1px solid #f0f0f0;
+    cursor: pointer;
+}
+
+.history-item p {
+    margin: 0;
+    font-size: 13px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.history-item small {
+    color: #888;
+    font-size: 11px;
+}
+
+.history-footer {
+    margin-top: auto;
+    font-size: 11px;
+    color: #888;
+    text-align: center;
+}
+
+/* Scrollbar styling */
+.chat-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+/* Welcome message styling */
+.welcome-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    flex-shrink: 0;
+}
+
+.welcome-icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+}
+
+.welcome-message h2 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 22px;
+}
+
+.welcome-message p {
+    color: #888;
+    font-size: 14px;
+}
+
+/* Individual message styling */
+.message {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 20px;
+    line-height: 1.4;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+/* User messages on right */
+.message.user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+/* Assistant messages on left */
+.message.assistant {
+    align-self: flex-start;
+    background: white;
+    color: #333;
+    border: 1px solid #e0e0e0;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Code blocks in assistant messages */
+.message.assistant pre {
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 8px 0;
+}
+
+.message.assistant code {
+    background: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+/* Input container fixed at bottom */
+.input-container {
+    padding: 16px 20px;
+    background: white;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+}
+
+/* Input wrapper with gap */
+.input-wrapper {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Message input styling */
+#messageInput {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#messageInput:focus {
+    border-color: #667eea;
+}
+
+/* Send button styling */
+#sendButton {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    flex-shrink: 0;
+}
+
+#sendButton:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+#sendButton:active {
+    transform: scale(0.95);
+}
+
+#sendButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Status text below chat */
+.status {
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    background: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+    }
+
+    .header {
+        flex-direction: column;
+    }
+
+    .header-top {
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .header-left {
+        width: auto;
+    }
+
+    .header-center {
+        width: 100%;
+    }
+
+    .tagline {
+        font-size: 16px;
+    }
+
+    .header-right {
+        width: auto;
+    }
+
+    .main-area {
+        flex-direction: column;
+    }
+
+    .history-column {
+        width: 100%;
+        order: 2;
+        border-left: none;
+        border-top: 1px solid #eee;
+        padding: 10px 12px;
+    }
+
+    .message {
+        max-width: 85%;
+    }
+}
+
+.vam{
+    display: flex;
+    gap: 10px;
+}
+
+.vam button{
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 5px;
+    border-radius: 5px ;
+    cursor: pointer;
+}
